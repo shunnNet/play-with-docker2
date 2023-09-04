@@ -1,0 +1,18 @@
+name: Auto delete merged branch
+on:   
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  log:
+    if: ${{ github.base_ref == 'develop' && github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3
+      
+      - name: Delete merged head branch
+        uses: koj-co/delete-merged-action@master
+        with:
+          branches: ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
