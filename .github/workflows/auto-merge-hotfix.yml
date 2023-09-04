@@ -1,0 +1,26 @@
+name: Auto merge hotfix
+on:   
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  log:
+    if: ${{ github.base_ref == 'master' && contains(github.head_ref, 'hotfix') }}
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3
+    
+      - name: Merge hotfix -> develop
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: ${{ github.head_ref }}
+          target_branch: develop
+          github_token: ${{ github.token }}
+      
+      - name: Delete hofix branch
+        uses: koj-co/delete-merged-action@master
+        with:
+          branches: ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
